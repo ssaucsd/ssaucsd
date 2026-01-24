@@ -1,116 +1,164 @@
 # SSAUCSD
 
-Monorepo for SSA UCSD web applications, built with Turborepo.
+Monorepo for the Symphonic Student Association at UC San Diego, containing:
 
-## Applications
+- **@ssaucsd/dashboard** - Next.js dashboard for managing member data (port 3000)
+- **@ssaucsd/web** - Astro static site for ssaucsd.org (port 4321)
 
-| App | Description | Port | Tech Stack |
-|-----|-------------|------|------------|
-| `@ssaucsd/dashboard` | Member management dashboard | 3000 | Next.js 16, React 19, Supabase |
-| `@ssaucsd/web` | Public website (ssaucsd.org) | 4321 | Astro 5, React 19 |
+## Monorepo Structure
+
+```
+ssaucsd/
+├── apps/
+│   ├── dashboard/          # Next.js dashboard (@ssaucsd/dashboard)
+│   └── web/                # Astro website (@ssaucsd/web)
+├── packages/
+│   ├── database/           # Shared Supabase types (@ssaucsd/database)
+│   ├── ui/                 # Shared utilities (@ssaucsd/ui)
+│   └── typescript-config/  # Shared TypeScript configs
+├── supabase/               # Supabase migrations and config
+├── turbo.json
+└── package.json
+```
 
 ## Prerequisites
 
-- **Node.js** 20+
-- **pnpm** 9.15.0+ (`corepack enable && corepack prepare pnpm@9.15.0 --activate`)
-- **Docker** (for local Supabase)
+- [mise](https://mise.jdx.dev/) - Tool version manager
+- [Docker](https://www.docker.com/) - Required for local Supabase
 
-## Getting Started
+## Development Setup
 
-### 1. Install Dependencies
+### 1. Install mise
+
+```bash
+# macOS
+brew install mise
+
+# Or see https://mise.jdx.dev/getting-started.html for other methods
+```
+
+Add mise to your shell (if not already configured):
+
+```bash
+# For zsh (~/.zshrc)
+echo 'eval "$(mise activate zsh)"' >> ~/.zshrc
+
+# For bash (~/.bashrc)
+echo 'eval "$(mise activate bash)"' >> ~/.bashrc
+```
+
+### 2. Clone and install tools
+
+```bash
+git clone <repo-url>
+cd ssaucsd
+mise install
+```
+
+This installs Node.js 24 and enables corepack for pnpm 9.15.0.
+
+### 3. Install dependencies
 
 ```bash
 pnpm install
 ```
 
-### 2. Set Up Environment Variables
+### 4. Configure environment variables
 
-Copy the example environment files and configure them:
+Copy the example files and fill in the values:
 
 ```bash
-# Dashboard app
+cp .env.example .env
 cp apps/dashboard/.env.example apps/dashboard/.env
+cp apps/web/.env.example apps/web/.env
 ```
 
-Required variables for the dashboard:
+See [Environment Variables](#environment-variables) for details.
 
-| Variable | Description |
-|----------|-------------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL (local: `http://127.0.0.1:54321`) |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase anonymous key |
-| `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
-
-### 3. Start Local Supabase
+### 5. Start local Supabase
 
 ```bash
 pnpm db:start
 ```
 
-This starts a local Supabase instance with:
-- API: `http://127.0.0.1:54321`
-- Studio UI: `http://127.0.0.1:54323`
+This starts the local Supabase instance:
+- API: http://127.0.0.1:54321
+- Studio UI: http://127.0.0.1:54323
 
-### 4. Start Development Servers
+After starting, copy the displayed `anon key` to your environment files.
+
+For local development, use these values in `apps/dashboard/.env`:
+```
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key shown after db:start>
+```
+
+### 6. Start development servers
 
 ```bash
 pnpm dev
 ```
 
-This starts both apps in parallel:
 - Dashboard: http://localhost:3000
 - Web: http://localhost:4321
 
-## Development Workflow
+## Environment Variables
 
-### Running Commands
+### Root Level (`.env`)
 
-All commands should be run from the monorepo root:
+| Variable | Description |
+|----------|-------------|
+| `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET` | Google OAuth client secret for Supabase Auth |
+
+### Dashboard (`apps/dashboard/.env`)
+
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous/public key |
+| `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
+| `NEXT_PUBLIC_POSTHOG_KEY` | PostHog project API key |
+| `NEXT_PUBLIC_POSTHOG_HOST` | PostHog host URL |
+| `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN for error tracking |
+| `SENTRY_AUTH_TOKEN` | Sentry auth token for source maps |
+
+### Web (`apps/web/.env`)
+
+| Variable | Description |
+|----------|-------------|
+| `PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous/public key |
+
+## Development Commands
+
+Run all commands from the monorepo root.
+
+### Application Development
 
 ```bash
-# Start all apps
-pnpm dev
-
-# Start a specific app
-pnpm --filter @ssaucsd/dashboard dev
-pnpm --filter @ssaucsd/web dev
-
-# Build all apps
-pnpm build
-
-# Run linting
-pnpm lint
-
-# Run type checking
-pnpm typecheck
+pnpm dev          # Start all apps in development mode
+pnpm build        # Build all apps for production
+pnpm lint         # Run linting across all packages
+pnpm typecheck    # Run TypeScript type checking
 ```
 
-### Database Commands
+### Database (Supabase)
 
 ```bash
-# Start/stop local Supabase
-pnpm db:start
-pnpm db:stop
-
-# Reset database (runs migrations + seed)
-pnpm db:reset
-
-# Generate TypeScript types from schema
-pnpm db:generate-types
+pnpm db:start           # Start local Supabase instance
+pnpm db:stop            # Stop local Supabase instance
+pnpm db:reset           # Reset database (runs migrations + seed)
+pnpm db:generate-types  # Generate TypeScript types from schema
+pnpm db:diff -f <name>  # Generate migration from schema changes
+pnpm db:migrate <name>  # Create a new empty migration file
+pnpm db:push            # Push migrations to remote database
 ```
 
-### Database Migrations
-
-From within `apps/dashboard/`:
+### Running Specific Apps
 
 ```bash
-# Create a new migration
-pnpm db:migrate <migration_name>
-
-# Generate migration from schema changes
-pnpm db:diff -f <migration_name>
-
-# Push migrations to remote database
-pnpm db:push
+pnpm --filter @ssaucsd/dashboard dev  # Run only dashboard
+pnpm --filter @ssaucsd/web dev        # Run only web
 ```
 
 ### Adding Dependencies
@@ -124,98 +172,92 @@ pnpm add <package> --filter @ssaucsd/web
 pnpm add -D <package> -w
 ```
 
-## Project Structure
+## Deployment
 
-```
-ssaucsd/
-├── apps/
-│   ├── dashboard/          # Next.js dashboard app
-│   │   ├── src/
-│   │   │   ├── app/        # Next.js App Router
-│   │   │   ├── components/ # React components
-│   │   │   └── lib/        # Utilities and queries
-│   │   └── supabase/       # Migrations and config
-│   └── web/                # Astro static site
-│       ├── src/
-│       │   ├── pages/      # File-based routing
-│       │   ├── layouts/    # Page layouts
-│       │   └── components/ # Astro components
-│       └── public/         # Static assets
-├── packages/
-│   ├── database/           # Shared Supabase types
-│   ├── ui/                 # Shared utilities (cn())
-│   └── typescript-config/  # Shared TS configs
-├── turbo.json              # Turborepo configuration
-├── pnpm-workspace.yaml     # pnpm workspace config
-└── package.json
-```
+### Dashboard (Vercel)
+
+1. Connect your repository to Vercel
+2. Configure the project:
+   - **Root Directory:** `apps/dashboard`
+   - **Build Command:** `cd ../.. && pnpm build --filter @ssaucsd/dashboard`
+   - **Output Directory:** `.next`
+   - **Install Command:** `cd ../.. && pnpm install`
+3. Add environment variables in Vercel dashboard:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET`
+   - `NEXT_PUBLIC_POSTHOG_KEY`
+   - `NEXT_PUBLIC_POSTHOG_HOST`
+   - `NEXT_PUBLIC_SENTRY_DSN`
+   - `SENTRY_AUTH_TOKEN`
+
+### Web (Vercel)
+
+1. Connect your repository to Vercel
+2. Configure the project:
+   - **Root Directory:** `apps/web`
+   - **Build Command:** `cd ../.. && pnpm build --filter @ssaucsd/web`
+   - **Output Directory:** `dist`
+   - **Install Command:** `cd ../.. && pnpm install`
+3. Add environment variables:
+   - `PUBLIC_SUPABASE_URL`
+   - `PUBLIC_SUPABASE_ANON_KEY`
+
+### Supabase (Production)
+
+1. Create a project at [supabase.com](https://supabase.com)
+2. Link your local project:
+   ```bash
+   npx supabase link --project-ref <project-id>
+   ```
+3. Push migrations to production:
+   ```bash
+   pnpm db:push
+   ```
+4. Configure Google OAuth in Supabase Dashboard:
+   - Go to Authentication > Providers > Google
+   - Add your Google OAuth credentials
+   - Set the authorized redirect URL to your production domain
 
 ## Shared Packages
 
 ### @ssaucsd/database
 
-Contains auto-generated Supabase database types:
+Generated Supabase database types shared across apps:
 
 ```typescript
 import { Tables, Database, Enums } from "@ssaucsd/database";
 ```
 
 Regenerate types after schema changes:
-
 ```bash
 pnpm db:generate-types
 ```
 
 ### @ssaucsd/ui
 
-Shared utilities:
+Shared utility functions:
 
 ```typescript
 import { cn } from "@ssaucsd/ui";
 ```
 
-## Deployment
+### @ssaucsd/typescript-config
 
-### Dashboard (Next.js)
+Shared TypeScript configurations extended by all packages.
 
-Deploy to Vercel:
+## Turborepo
 
-1. Connect your repository to Vercel
-2. Set the root directory to `apps/dashboard`
-3. Configure environment variables:
-   - `NEXT_PUBLIC_SUPABASE_URL` - Production Supabase URL
-   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` - Production anon key
-   - `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET` - Google OAuth secret
-4. Set build command: `cd ../.. && pnpm build --filter @ssaucsd/dashboard`
-5. Set output directory: `.next`
+This monorepo uses Turborepo for:
 
-### Web (Astro)
-
-Deploy to Vercel or any static host:
-
-1. Connect your repository to Vercel
-2. Set the root directory to `apps/web`
-3. Configure build command: `cd ../.. && pnpm build --filter @ssaucsd/web`
-4. Set output directory: `dist`
-
-### Supabase
-
-1. Create a project at [supabase.com](https://supabase.com)
-2. Link your local project:
-   ```bash
-   cd apps/dashboard
-   pnpx supabase link --project-ref <project-id>
-   ```
-3. Push migrations to production:
-   ```bash
-   pnpm db:push
-   ```
-4. Configure Google OAuth in Supabase Dashboard under Authentication > Providers
+- **Build caching** - Faster rebuilds by caching unchanged packages
+- **Parallel execution** - Run tasks across packages simultaneously
+- **Dependency ordering** - Packages build before dependent apps
 
 ## Tech Stack
 
 - **Monorepo**: Turborepo + pnpm workspaces
-- **Dashboard**: Next.js 16, React 19, Tailwind CSS v4, shadcn/ui
+- **Dashboard**: Next.js, React 19, Tailwind CSS v4, shadcn/ui
 - **Web**: Astro 5, React 19, Tailwind CSS v4
 - **Database**: Supabase (PostgreSQL)
 - **Auth**: Supabase Auth with Google OAuth
