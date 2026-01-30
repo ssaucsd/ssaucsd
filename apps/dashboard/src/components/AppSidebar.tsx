@@ -33,8 +33,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { SidebarNav } from "./SidebarNav";
 
-const userActions = [
+export const userActions = [
   {
     label: "Home",
     icon: Home,
@@ -52,7 +53,7 @@ const userActions = [
   },
 ];
 
-const adminActions = [
+export const adminActions = [
   {
     label: "Edit Users",
     icon: User,
@@ -85,47 +86,7 @@ export async function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {userActions.map((action) => (
-                <SidebarMenuItem key={action.label}>
-                  <Link href={action.href} className="w-full">
-                    <SidebarMenuButton
-                      tooltip={action.label}
-                      className="cursor-pointer w-full"
-                    >
-                      <HugeiconsIcon icon={action.icon} strokeWidth={2} />
-                      <span>{action.label}</span>
-                    </SidebarMenuButton>
-                  </Link>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        {isAdmin && (
-          <SidebarGroup>
-            <SidebarGroupLabel>Admin Actions</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {adminActions.map((action) => (
-                  <SidebarMenuItem key={action.label}>
-                    <Link href={action.href} className="w-full">
-                      <SidebarMenuButton
-                        tooltip={action.label}
-                        className="cursor-pointer w-full"
-                      >
-                        <HugeiconsIcon icon={action.icon} strokeWidth={2} />
-                        <span>{action.label}</span>
-                      </SidebarMenuButton>
-                    </Link>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
+        <SidebarNav userActions={userActions} adminActions={adminActions} isAdmin={isAdmin} />
       </SidebarContent>
       <SidebarFooter className="p-2 gap-2">
         <div className="flex w-full items-center gap-2">
