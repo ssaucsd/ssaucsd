@@ -1,4 +1,4 @@
-# SSA UCSD Web
+# SSA at UC San Diego Web
 
 Public Astro website for ssaucsd.org. Event data is read from Convex.
 

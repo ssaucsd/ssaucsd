@@ -1,4 +1,4 @@
-# SSA UCSD Dashboard
+# SSA at UC San Diego Dashboard
 
 Next.js dashboard for SSA members/admins using Clerk authentication and Convex backend.
 

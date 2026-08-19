@@ -54,7 +54,7 @@ export default function NotFound() {
 
       {/* Footer / Copyright or Branding */}
       <div className="absolute bottom-8 text-center text-sm text-muted-foreground opacity-50">
-        SSA at UCSD
+        SSA at UC San Diego
       </div>
     </div>
   );
