@@ -54,7 +54,7 @@ const INITIATIVES = [
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Symphonic Student Association at UCSD",
+  name: "Symphonic Student Association at UC San Diego",
   url: "https://ssaucsd.org",
   logo: "https://ssaucsd.org/favicon/android-chrome-512x512.png",
   sameAs: [
@@ -65,7 +65,7 @@ const organizationSchema = {
     "https://discord.gg/PncDrAxvkS",
   ],
   description:
-    "SSA at UCSD - University of California, San Diego's largest student-run classical music-oriented organization.",
+    "SSA at UC San Diego - University of California, San Diego's largest student-run classical music-oriented organization.",
   address: {
     "@type": "PostalAddress",
     addressLocality: "La Jolla",
@@ -76,7 +76,7 @@ const organizationSchema = {
 };
 ---
 
-<Layout title="SSA at UCSD">
+<Layout title="SSA at UC San Diego">
   <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
 
   <Hero imageSrc={heroImage.src} />

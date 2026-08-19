@@ -85,7 +85,7 @@ export function AppSidebar() {
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={MusicNoteSquare02Icon} />
           <div className="font-bold text-lg font-serif group-data-[collapsible=icon]:hidden">
-            SSA at UCSD
+            SSA at UC San Diego
           </div>
         </div>
       </SidebarHeader>

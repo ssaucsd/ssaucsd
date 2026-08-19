@@ -1,4 +1,4 @@
-# SSAUCSD
+# SSA at UC San Diego
 
 Monorepo for the Symphonic Student Association at UC San Diego:
 

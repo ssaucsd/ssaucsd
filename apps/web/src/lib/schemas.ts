@@ -10,7 +10,7 @@ export function generateWebSiteSchema() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${BASE_URL}/#website`,
-    name: "SSA at UCSD",
+    name: "SSA at UC San Diego",
     url: BASE_URL,
     description:
       "University of California, San Diego's largest student-run classical music-oriented organization.",
@@ -77,7 +77,7 @@ export function generateEventSchema(event: {
     ...(event.description && { description: event.description }),
     organizer: {
       "@type": "Organization",
-      name: "Symphonic Student Association at UCSD",
+      name: "Symphonic Student Association at UC San Diego",
       url: BASE_URL,
     },
     eventStatus: "https://schema.org/EventScheduled",

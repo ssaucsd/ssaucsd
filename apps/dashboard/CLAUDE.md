@@ -4,7 +4,7 @@ This file provides guidance for working in `apps/dashboard`.
 
 ## Project Overview
 
-SSA UCSD member/admin dashboard built with Next.js, Clerk auth, and Convex.
+SSA at UC San Diego member/admin dashboard built with Next.js, Clerk auth, and Convex.
 
 ## Monorepo Context
 
